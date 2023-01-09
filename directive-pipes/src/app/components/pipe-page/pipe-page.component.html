@@ -1,1 +1,21 @@
-<p>pipe-page works!</p>
+<div style="display: flex; flex-direction: column">
+  <label>Vælg dato</label>
+  <input
+    type="date"
+    [formControl]="bpDateController"
+    style="max-width: 200px; font-size: 20px"
+  />
+</div>
+<div style="display: flex; flex-direction: column">
+  <label>Hvor mange bank dage skal tilføjes?</label>
+  <input
+    type="number"
+    [formControl]="bpAdditionController"
+    style="max-width: 200px; font-size: 20px"
+  />
+</div>
+
+<div style="display: flex; flex-direction: column; font-size: 24px">
+  <p>Resultat</p>
+  {{ bpDateController.value | bankPipe : bpAdditionController.value | date }}
+</div>
