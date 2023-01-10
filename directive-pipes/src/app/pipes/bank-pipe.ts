@@ -2,7 +2,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'bankPipe',
-  pure: false,
 })
 export class BankPipe implements PipeTransform {
   transform(value: Date | null, bankdaysToAdd: number | null = 0): any {
@@ -10,23 +9,32 @@ export class BankPipe implements PipeTransform {
       return null;
     }
 
-    const toAdd = bankdaysToAdd === null ? 0 : bankdaysToAdd;
+    let toAdd = bankdaysToAdd === null ? 0 : bankdaysToAdd;
 
     const newDate = new Date(value);
 
     let weekendsToAdd = Math.floor(toAdd / 5);
-    let daysToAdd = toAdd % 5;
-    // doesn't work quite right
-    const originalWeekDay = newDate.getDay();
+    const daysToAdd = toAdd % 5;
+
+    let originalWeekDay = newDate.getDay();
+
+    let additionalDays = 0;
+    if (originalWeekDay === 0) {
+      additionalDays = 1;
+      originalWeekDay = 1;
+    } else if (originalWeekDay === 6) {
+      additionalDays = 2;
+      originalWeekDay = 1;
+    }
 
     if (originalWeekDay + daysToAdd > 5) {
       weekendsToAdd++;
-    } else if (originalWeekDay + daysToAdd === 0) {
-      daysToAdd++;
     }
-    // doesn't work quite right
+
     const originalDate = newDate.getUTCDate();
 
-    return newDate.setUTCDate(originalDate + (weekendsToAdd * 2 + toAdd));
+    toAdd = toAdd + additionalDays + weekendsToAdd * 2;
+
+    return newDate.setUTCDate(originalDate + toAdd);
   }
 }
